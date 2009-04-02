@@ -1,0 +1,7 @@
+
+For more information on inactive_record, see http://inactive_record.rubyforge.org
+
+NOTE: Change this information in PostInstall.txt 
+You can also delete it if you don't want it.
+
+
