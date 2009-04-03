@@ -3,10 +3,13 @@ Manifest.txt
 PostInstall.txt
 README.rdoc
 Rakefile
+inactive_record.gemspec
 lib/inactive_record.rb
+lib/inactive_record/base.rb
 script/console
 script/destroy
 script/generate
+spec/inactive_record/base_spec.rb
 spec/inactive_record_spec.rb
 spec/spec.opts
 spec/spec_helper.rb

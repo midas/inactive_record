@@ -1,32 +1,57 @@
 = inactive_record
 
-* FIX (url)
+http://github.com/midas/inactive_record/tree/master
+
 
 == DESCRIPTION:
 
-FIX (describe your package)
+InactiveRecord gives you many of the features you know and love from ActiveRecord without the need for a backing
+database table.
 
-== FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+== FEATURES:
 
-== SYNOPSIS:
+* An initialize method that accepts an attribute hash, including the Rails Date/Time select methods (ie. start_date(1i), etc...)
+* A to_xml method that accepts the same options as its respective ActiveRecord method
+* All validations work when you call valid?, excluding validates_uniqueness_of
+* Supports errors_for method (when validations fail, just render the new or edit form as you mormaly would)
+* Works with Rails 2.3
 
-  FIX (code sample of usage)
 
-== REQUIREMENTS:
+==PROBLEMS:
 
-* FIX (list of requirements)
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+  sudo gem install midas-inactive_record
+
+
+== USE:
+
+Add gem requirement to your environment.rb file:
+
+  config.gem 'midas-inactive_record', :version => '1.0.0', :lib => 'inactive_record', :source => 'http://gems.github.com'
+
+Create a model class:
+
+  class Thing < InactiveRecord::Base
+    attr_accessor :name, :begin_date, :end_date
+    validates_presence_of :name, :begin_date, :end_date
+  end
+
+Now you can use errors_for, etc in your forms.
+
+
+== REQUIREMENTS:
+
+* ActiveRecord >= 2.2.0
+
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2009 FIXME full name
+Copyright (c) 2009 C. Jason Harrelson (midas)
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
