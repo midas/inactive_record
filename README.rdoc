@@ -39,6 +39,15 @@ Create a model class:
     validates_presence_of :name, :begin_date, :end_date
   end
 
+In things_controller.rb:
+
+  @thing = Thing.new( params[:thing] )
+  
+  unless @thing.valid?
+    render :new
+    return
+  end
+
 Now you can use errors_for, etc in your forms.
 
 
