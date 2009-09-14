@@ -81,12 +81,17 @@ module InactiveRecord
         self.instance_variables.each do |var|
           var_name = var.to_s.gsub( /@/, '' )
           var_name = var_name.dasherize if dasherize
+          attr_val = self.instance_variable_get( var )
           if only
-            xml.tag!( var_name, self.instance_variable_get( var ) ) if only.include?( var_name ) || only.include?( var_name.to_sym )
+            xml.tag!( var_name, attr_val ) if only.include?( var_name ) || only.include?( var_name.to_sym )
           elsif except
-            xml.tag!( var_name, self.instance_variable_get( var ) ) unless except.include?( var_name ) || except.include?( var_name.to_sym )
+            xml.tag!( var_name, attr_val ) unless except.include?( var_name ) || except.include?( var_name.to_sym )
           else
-            xml.tag!( var_name, self.instance_variable_get( var ) )
+            if attr_val.is_a?( Array )
+              xml << attr_val.to_xml( :skip_instruct => true )
+            else
+              xml.tag!( var_name, attr_val )
+            end
           end
         end
       end
