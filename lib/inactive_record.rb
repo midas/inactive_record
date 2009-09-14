@@ -4,5 +4,5 @@ $:.unshift(File.dirname(__FILE__)) unless
 require 'inactive_record/base'
 
 module InactiveRecord
-  VERSION = '1.0.1'
+  VERSION = '1.0.2'
 end
