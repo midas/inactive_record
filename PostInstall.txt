@@ -1,5 +1,0 @@
-
-For more information on inactive_record, see http://github.com/midas/inactive_record/tree/master
-
-
-

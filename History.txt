@@ -1,4 +1,9 @@
-== 1.0.0 2009-06-24
+== 1.0.3 2010-01-04
+
+* Added a :methods option to #to_xml that acts just as its ActiveRecord counterpart does.
+* Refactored #to_xml to be more concise.
+
+== 1.0.2 2009-06-24
 
 * Add attr_human_name method.
 

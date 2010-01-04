@@ -2,7 +2,6 @@ require 'active_record'
 require 'active_record/base'
 
 module InactiveRecord
-  
   class Base
       
     def initialize( attributes={} )
@@ -39,7 +38,7 @@ module InactiveRecord
       yield self if block_given?
     end
 
-    def [](key)
+    def []( key )
       instance_variable_get("@#{key}")
     end
 
@@ -56,6 +55,7 @@ module InactiveRecord
     # *options*
     # :only - A symbol or array of symbols of instance variable names to include in the xml.
     # :except - A symbol or array of symbols of instance variable names to exclude in the xml.
+    # :methods - A symbol or array of symbols of methods to evaluate and include in the xml.
     # :skip_instruct - If true, output the document type, otherwise do not.
     # :skip_types - (not yet) If true, do not output types of variables that are not strings.
     # :include - (not yet) First level associations to include.
@@ -64,33 +64,61 @@ module InactiveRecord
     def to_xml( options={} )
       options[:indent] ||= 2
       except = options[:except]
+      methods = options[:methods]
       only = options[:only]
       throw 'Both the :except and :only options cannot be used simultaneously.' if !except.nil? && !only.nil?
 
-      except = Array.new << except.to_sym if except.is_a?( String )
-      except = Array.new << except if except.is_a?( Symbol )
+      only = only.map { |attribute| attribute.to_sym } if only.is_a?( Array )
       only = Array.new << only.to_sym if only.is_a?( String )
       only = Array.new << only if only.is_a?( Symbol )
-
+      except = except.map { |attribute| attribute.to_sym } if except.is_a?( Array )
+      except = Array.new << except.to_sym if except.is_a?( String )
+      except = Array.new << except if except.is_a?( Symbol )
+      methods = methods.map { |attribute| attribute.to_sym } if methods.is_a?( Array )
+      methods = Array.new << methods.to_sym if methods.is_a?( String )
+      methods = Array.new << methods if methods.is_a?( Symbol )
       dasherize = options[:dasherize]
       dasherize = true unless !dasherize.nil?
+      
+      attrs = self.instance_variables.map { |var| var.to_s.gsub( /@/, '' ).to_sym }
+      to_serialize = []
+      to_serialize += methods unless methods.nil?
+      if only
+        to_serialize += (attrs.select { |var| only.include?( var ) })
+      elsif except
+        to_serialize += (attrs - except)
+      else
+        to_serialize += attrs unless attrs.nil?
+      end
 
       xml = options[:builder] ||= Builder::XmlMarkup.new( :indent => options[:indent] )
       xml.instruct! unless options[:skip_instruct]
-      xml.tag!( self.class.to_s.underscore ) do
-        self.instance_variables.each do |var|
-          var_name = var.to_s.gsub( /@/, '' )
-          var_name = var_name.dasherize if dasherize
-          attr_val = self.instance_variable_get( var )
-          if only
-            xml.tag!( var_name, attr_val ) if only.include?( var_name ) || only.include?( var_name.to_sym )
-          elsif except
-            xml.tag!( var_name, attr_val ) unless except.include?( var_name ) || except.include?( var_name.to_sym )
+      el_tag_name = dasherize ? self.class.to_s.underscore.dasherize : self.class.to_s.underscore
+      xml.tag!( el_tag_name ) do
+        to_serialize.each do |attribute|
+          var_name = dasherize ? attribute.to_s.dasherize : attribute
+          attr_val = self.send( attribute ) if self.respond_to?( attribute )
+          if attr_val.is_a?( Array )
+            xml << attr_val.to_xml( :skip_instruct => true )
           else
-            if attr_val.is_a?( Array )
-              xml << attr_val.to_xml( :skip_instruct => true )
+            if attr_val.nil?
+              is_nil = 'true'
+            elsif attr_val.is_a?( TrueClass ) || attr_val.is_a?( FalseClass )
+              type = 'boolean' 
+            elsif attr_val.is_a?( Integer ) || attr_val.is_a?( Fixnum )
+              type = 'integer'
+            elsif attr_val.is_a?( Float )
+              type = 'float'
+            elsif attr_val.is_a?( DateTime ) || attr_val.is_a?( Date ) || attr_val.is_a?( Time )
+              type = 'datetime'
+            end
+            
+            if is_nil
+              xml.tag!( var_name, attr_val, :nil => is_nil ) #unless attr_val.nil?
+            elsif type
+              xml.tag!( var_name, attr_val, :type => type ) #unless attr_val.nil?
             else
-              xml.tag!( var_name, attr_val )
+              xml.tag!( var_name, attr_val ) #unless attr_val.nil?
             end
           end
         end
@@ -109,8 +137,8 @@ module InactiveRecord
       [self]
     end
 
-    def self.human_name
-    
+    def self.human_name( options={} )
+      Base.human_attribute_name(@name)
     end
     
     # Allows alternate humanized versions of attributes to be set.  For example, an attribute such as 'num_employees' would be
