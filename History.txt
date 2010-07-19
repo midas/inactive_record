@@ -1,3 +1,8 @@
+== 1.0.4 2010-07-19
+
+* Removed attr_human_name method and accompanying methods in favor of I18n.translate.
+
+
 == 1.0.3 2010-01-04
 
 * Added a :methods option to #to_xml that acts just as its ActiveRecord counterpart does.

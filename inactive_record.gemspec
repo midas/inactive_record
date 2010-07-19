@@ -5,25 +5,25 @@
 
 Gem::Specification.new do |s|
   s.name = %q{inactive_record}
-  s.version = "1.0.3"
+  s.version = "1.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["C. Jason Harrelson (midas)"]
-  s.date = %q{2010-01-04}
+  s.date = %q{2010-07-19}
   s.description = %q{InactiveRecord gives you many of the features you know and love from ActiveRecord without the need for a backing database table.}
   s.email = %q{jason@lookforwardenterprises.com}
   s.extra_rdoc_files = [
     "README.rdoc"
   ]
   s.files = [
-    "History.txt",
+    ".gitignore",
+     "History.txt",
      "README.rdoc",
      "Rakefile",
      "VERSION",
      "inactive_record.gemspec",
      "lib/inactive_record.rb",
      "lib/inactive_record/base.rb",
-     "pkg/inactive_record-1.0.3.gem",
      "script/console",
      "script/destroy",
      "script/generate",
@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/midas/inactive_record}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.5}
+  s.rubygems_version = %q{1.3.6}
   s.summary = %q{InactiveRecord gives you many of the features you know and love from ActiveRecord without the need for a backing database table.}
   s.test_files = [
     "spec/inactive_record/base_spec.rb",
